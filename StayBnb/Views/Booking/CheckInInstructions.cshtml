@@ -1,0 +1,72 @@
+﻿@model StayBnb.Models.CheckInProcess
+
+@{
+ViewData["Title"] = "Check-In Instructions";
+}
+
+<div class="checkin-page">
+    <a asp-controller="Booking" asp-action="MyBookings" class="checkin-back">
+        &larr; Back to My Bookings
+    </a>
+<div class="checkin-card">
+    <div class="checkin-icon">♡</div>
+
+    <span class="checkin-eyebrow">YOUR STAY</span>
+    <h1>Check-in Instructions</h1>
+    <p class="checkin-subtitle">
+        Everything you need to prepare for a smooth arrival.
+    </p>
+
+    <div class="checkin-divider"></div>
+
+    <section class="checkin-section">
+        <div class="checkin-section-heading">
+            <span class="checkin-section-icon">⌂</span>
+            <h2>Arrival Instructions</h2>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(Model?.Instructions))
+        {
+            <p class="checkin-information">@Model.Instructions</p>
+        }
+        else
+        {
+            <p class="checkin-empty">
+                Your host has not added arrival instructions yet.
+            </p>
+        }
+    </section>
+
+    <section class="checkin-section">
+        <div class="checkin-section-heading">
+            <span class="checkin-section-icon">✓</span>
+            <h2>Required Documents</h2>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(Model?.RequiredDocuments))
+        {
+            <p class="checkin-information">@Model.RequiredDocuments</p>
+        }
+        else
+        {
+            <p class="checkin-empty">
+                No document requirements have been provided yet.
+            </p>
+        }
+    </section>
+
+    <div class="checkin-note">
+        <strong>Before you arrive</strong>
+        <p>
+            Review the information above before travelling.
+            Contact your host if you need clarification.
+        </p>
+    </div>
+
+    <a asp-controller="Booking"
+       asp-action="MyBookings"
+       class="checkin-button">
+        Return to My Bookings
+    </a>
+</div>
+</div>
