@@ -1,0 +1,55 @@
+﻿
+@{
+    ViewData["Title"] = "SuperAdmin Dashboard";
+}
+
+<div class="superadmin-dashboard">
+    <div class="superadmin-header">
+        <div>
+            <p class="superadmin-eyebrow">PLATFORM MANAGEMENT</p>
+            <h1>SuperAdmin Dashboard</h1>
+            <p>Monitor StayBnb and oversee platform activity.</p>
+        </div>
+    </div>
+
+    <div class="superadmin-stats">
+        <div class="superadmin-card">
+            <p>Total Users</p>
+            <h2>@ViewBag.TotalUsers</h2>
+        </div>
+
+        <div class="superadmin-card">
+            <p>Total Properties</p>
+            <h2>@ViewBag.TotalProperties</h2>
+        </div>
+
+        <div class="superadmin-card">
+            <p>Pending Properties</p>
+            <h2>@ViewBag.PendingProperties</h2>
+        </div>
+
+        <div class="superadmin-card">
+            <p>Total Bookings</p>
+            <h2>@ViewBag.TotalBookings</h2>
+        </div>
+    </div>
+
+   <div class="superadmin-section">
+    <h2>Platform Administration</h2>
+    <p>Manage administrator access and oversee StayBnb operations.</p>
+
+    <a asp-controller="SuperAdmin"
+       asp-action="ManageAdmins"
+       class="superadmin-button">
+        Manage Administrators
+    </a>
+
+    <a asp-controller="Admin"
+       asp-action="Dashboard"
+       class="superadmin-button"
+       style="margin-left: 10px;">
+        Open Admin Dashboard
+    </a>
+</div>
+
+</div>

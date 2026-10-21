@@ -47,8 +47,8 @@
                     </a>
                 </div>
 
-                <!-- Account actions -->
-       <div class="staybnb-nav-right">
+    <div class="staybnb-nav-right">
+
     <a class="staybnb-host-link"
        asp-controller="Property"
        asp-action="Create">
@@ -56,37 +56,47 @@
     </a>
 
     <a class="staybnb-host-link"
-   asp-controller="Booking"
-   asp-action="MyBookings">
-    My Bookings
-</a>
-
-    <a class="staybnb-host-link"
-   asp-controller="HostApplication"
-   asp-action="Index">
-    My Host Applications
-</a>
-
-@if (User.IsInRole("Host"))
-{
-    <a class="staybnb-host-link"
-       asp-controller="Host"
-       asp-action="MyProperties">
-        My Properties
+       asp-controller="Booking"
+       asp-action="MyBookings">
+        My Bookings
     </a>
-}
 
+    <a class="staybnb-host-link"
+       asp-controller="HostApplication"
+       asp-action="Index">
+        My Host Applications
+    </a>
 
-<a class="staybnb-host-link"
-   asp-controller="Admin"
-   asp-action="Dashboard">
-    Admin Dashboard
-</a>
+    @if (User.IsInRole("Host"))
+    {
+        <a class="staybnb-host-link"
+           asp-controller="Host"
+           asp-action="MyProperties">
+            My Properties
+        </a>
+    }
 
-<partial name="_LoginPartial" />
+    @if (User.IsInRole("Admin") || User.IsInRole("SuperAdmin"))
+    {
+        <a class="staybnb-host-link"
+           asp-controller="Admin"
+           asp-action="Dashboard">
+            Admin Dashboard
+        </a>
+    }
 
-</div>
-                    <partial name="_LoginPartial" />
+    @if (User.IsInRole("SuperAdmin"))
+    {
+        <a class="staybnb-host-link"
+           asp-controller="SuperAdmin"
+           asp-action="Dashboard">
+            SuperAdmin Dashboard
+        </a>
+    }
+
+    <partial name="_LoginPartial" />
+
+</div>          <partial name="_LoginPartial" />
                 </div>
 
             </div>

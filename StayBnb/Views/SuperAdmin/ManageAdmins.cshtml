@@ -1,0 +1,102 @@
+﻿@model IEnumerable<StayBnb.Models.ApplicationUser>
+
+@{
+    ViewData["Title"] = "Manage Administrators";
+}
+
+<div class="superadmin-dashboard">
+    <p class="superadmin-eyebrow">PLATFORM MANAGEMENT</p>
+    <h1>Manage Administrators</h1>
+    <p>Review registered users and manage administrator access.</p>
+
+    @if (TempData["AdminMessage"] != null)
+    {
+        <div class="alert alert-info">
+            @TempData["AdminMessage"]
+        </div>
+    }
+
+    <div class="superadmin-section">
+        @if (!Model.Any())
+        {
+            <p>No registered users were found.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var user in Model)
+                        {
+                            var isAdmin = User.Identity != null
+                                && await UserIsAdmin(user.Id);
+
+                            <tr>
+                                <td>@user.FullName</td>
+                                <td>@user.Email</td>
+                                <td>
+                                    @if (isAdmin)
+                                    {
+                                        <span class="badge bg-success">Admin</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">Registered User</span>
+                                    }
+                                </td>
+                                <td>
+                                    @if (!isAdmin)
+                                    {
+                                        <form asp-controller="SuperAdmin"
+                                              asp-action="PromoteToAdmin"
+                                              method="post">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden"
+                                                   name="userId"
+                                                   value="@user.Id" />
+                                            <button type="submit"
+                                                    class="superadmin-button">
+                                                Promote to Admin
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <span>Already an Admin</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+
+    <a asp-controller="SuperAdmin"
+       asp-action="Dashboard"
+       class="superadmin-button">
+        Back to Dashboard
+    </a>
+</div>
+
+@functions {
+    public async Task<bool> UserIsAdmin(string userId)
+    {
+        var userManager = Context.RequestServices
+            .GetRequiredService<UserManager<StayBnb.Models.ApplicationUser>>();
+
+        var user = await userManager.FindByIdAsync(userId);
+
+        return user != null
+            && await userManager.IsInRoleAsync(user, "Admin");
+    }
+}
