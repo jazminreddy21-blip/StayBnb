@@ -1,83 +1,104 @@
-﻿@model IEnumerable<StayBnb.Models.Property>
+﻿
+@model IEnumerable<StayBnb.Models.Property>
 
 @{
     ViewData["Title"] = "My Properties";
 }
 
-<div class="container py-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="host-properties-page">
+    <div class="host-properties-header">
         <div>
-            <h2>My Properties</h2>
-            <p class="text-muted">
-                Manage your listings and their check-in instructions.
-            </p>
+            <span class="host-properties-eyebrow">HOST DASHBOARD</span>
+            <h1>My Properties</h1>
+            <p>Manage your listings, bookings and check-in information.</p>
         </div>
 
-        <a asp-controller="Property"
-           asp-action="Create"
-           class="btn btn-primary">
-            Add Property
-        </a>
+        <div class="host-properties-actions">
+            <a asp-controller="Host"
+               asp-action="Bookings"
+               class="host-btn host-btn-outline">
+                Manage Bookings
+            </a>
+
+            <a asp-controller="Property"
+               asp-action="Create"
+               class="host-btn host-btn-primary">
+                + Add Property
+            </a>
+        </div>
     </div>
 
     @if (TempData["HostMessage"] != null)
     {
-        <div class="alert alert-info">
+        <div class="host-notice">
             @TempData["HostMessage"]
         </div>
     }
 
     @if (Model == null || !Model.Any())
     {
-        <div class="card border-0 shadow-sm rounded-4">
-            <div class="card-body p-5 text-center">
-                <h5>No properties found</h5>
-                <p class="text-muted">
-                    Submit a property to start managing your listings.
-                </p>
-                <a asp-controller="Property"
-                   asp-action="Create"
-                   class="btn btn-primary">
-                    Submit a Property
-                </a>
-            </div>
+        <div class="host-empty-state">
+            <div class="host-empty-icon">⌂</div>
+            <h2>Your properties will appear here</h2>
+            <p>You haven't listed any properties yet. Add your first property to get started.</p>
+
+            <a asp-controller="Property"
+               asp-action="Create"
+               class="host-btn host-btn-primary">
+                Add Your First Property
+            </a>
         </div>
     }
     else
     {
-        <div class="row g-4">
+        <div class="host-properties-summary">
+            <span>You have <strong>@Model.Count()</strong> listed properties</span>
+        </div>
+
+        <div class="host-properties-grid">
             @foreach (var property in Model)
             {
-                <div class="col-md-6 col-lg-4">
-                    <div class="card h-100 border-0 shadow-sm rounded-4">
-                        <div class="card-body p-4">
-                            <h5 class="card-title">
-                                @property.Title
-                            </h5>
+                <article class="host-property-card">
+                    <div class="host-property-top">
+                        <div class="host-property-icon">⌂</div>
 
-                            <p class="text-muted mb-2">
-                                @property.City
-                            </p>
+                        @if (property.IsActive)
+                        {
+                            <span class="host-status host-status-approved">
+                                Approved
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="host-status host-status-pending">
+                                Pending Approval
+                            </span>
+                        }
+                    </div>
 
-                            <p>
-                                <strong>Status:</strong>
-                                @(property.IsActive ? "Approved" : "Pending approval")
-                            </p>
+                    <div class="host-property-info">
+                        <h2>@property.Title</h2>
 
-                            <p class="mb-3">
-                                <strong>Price per night:</strong>
-                                @property.PricePerNight.ToString("C")
-                            </p>
+                        <p class="host-property-location">
+                            <span aria-hidden="true">⌖</span>
+                            @property.City, South Africa
+                        </p>
 
-                            <a asp-controller="CheckIn"
-                               asp-action="Manage"
-                               asp-route-propertyId="@property.Id"
-                               class="btn btn-primary w-100">
-                                Manage Check-In
-                            </a>
+                        <div class="host-property-price">
+                            <strong>R @property.PricePerNight.ToString("N2")</strong>
+                            <span>/ night</span>
                         </div>
                     </div>
-                </div>
+
+                    <div class="host-property-divider"></div>
+
+                    <a asp-controller="CheckIn"
+                       asp-action="Manage"
+                       asp-route-propertyId="@property.Id"
+                       class="host-btn host-btn-primary host-btn-full">
+                        Manage Check-In
+                    </a>
+                </article>
             }
         </div>
     }
