@@ -1,0 +1,59 @@
+﻿@model StayBnb.Models.Booking
+
+@{
+    ViewData["Title"] = "Booking Confirmation";
+}
+
+<div class="staybnb-booking-page">
+    <div class="booking-form-card">
+
+        <h1>Booking submitted successfully!</h1>
+
+        <p class="booking-subtitle">
+            Your booking has been saved. Your reservation is
+            currently pending confirmation.
+        </p>
+
+        <hr />
+
+        <h2>Booking details</h2>
+
+        <p>
+            <strong>Booking reference:</strong>
+            #@Model.Id
+        </p>
+
+        <p>
+            <strong>Check-in:</strong>
+            @Model.CheckInDate.ToString("dd MMMM yyyy")
+        </p>
+
+        <p>
+            <strong>Check-out:</strong>
+            @Model.CheckOutDate.ToString("dd MMMM yyyy")
+        </p>
+
+        <p>
+            <strong>Guests:</strong>
+            @Model.NumberOfGuests
+        </p>
+
+        <p>
+            <strong>Total price:</strong>
+            R @Model.TotalPrice.ToString("N2")
+        </p>
+
+        <p>
+            <strong>Status:</strong>
+            @Model.Status
+        </p>
+
+        <a asp-controller="Home"
+           asp-action="Index"
+           class="booking-submit-button"
+           style="display:block; text-align:center; text-decoration:none; margin-top:20px;">
+            Return to StayBnb
+        </a>
+
+    </div>
+</div>

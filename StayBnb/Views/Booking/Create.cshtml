@@ -1,0 +1,132 @@
+﻿@{
+    ViewData["Title"] = "Reserve your stay";
+    var property = ViewBag.Property as StayBnb.Models.Property;
+    var today = DateTime.Today.ToString("yyyy-MM-dd");
+}
+
+@if (property != null)
+{
+    <div class="staybnb-booking-page">
+        <a asp-controller="Property"
+           asp-action="Details"
+           asp-route-id="@property.Id"
+           class="booking-back-link">
+            &larr; Back to property
+        </a>
+
+        <h1>Reserve your stay</h1>
+        <p class="booking-subtitle">
+            You're one step closer to your next getaway.
+        </p>
+
+        <div class="booking-layout">
+            <div class="booking-form-card">
+                <h2>Your trip</h2>
+
+                <form asp-controller="Booking"
+                      asp-action="Create"
+                      method="post">
+
+                    @Html.AntiForgeryToken()
+
+                    @Html.ValidationSummary(false, "",
+                        new { @class = "text-danger" })
+
+                    <input type="hidden"
+                           name="propertyId"
+                           value="@property.Id" />
+
+                    <div class="booking-field">
+                        <label for="CheckInDate">Check-in</label>
+                        <input type="date"
+                               id="CheckInDate"
+                               name="checkInDate"
+                               min="@today"
+                               required />
+                        @Html.ValidationMessage("CheckInDate", "",
+                            new { @class = "text-danger" })
+                    </div>
+
+                    <div class="booking-field">
+                        <label for="CheckOutDate">Check-out</label>
+                        <input type="date"
+                               id="CheckOutDate"
+                               name="checkOutDate"
+                               min="@today"
+                               required />
+                        @Html.ValidationMessage("CheckOutDate", "",
+                            new { @class = "text-danger" })
+                    </div>
+
+                    <div class="booking-field">
+                        <label for="NumberOfGuests">
+                            Number of guests
+                        </label>
+                        <input type="number"
+                               id="NumberOfGuests"
+                               name="numberOfGuests"
+                               min="1"
+                               max="20"
+                               value="2"
+                               required />
+                        @Html.ValidationMessage("NumberOfGuests", "",
+                            new { @class = "text-danger" })
+                    </div>
+
+                    <div class="booking-cost-preview">
+                        <h3>Price breakdown</h3>
+
+                        <p>
+                            <span>Price per night</span>
+                            <strong>R @property.PricePerNight.ToString("N2")</strong>
+                        </p>
+
+                        <p>
+                            <span>Cleaning fee</span>
+                            <strong>R @property.CleaningFee.ToString("N2")</strong>
+                        </p>
+
+                        <p>
+                            <span>Service fee</span>
+                            <strong>R @property.ServiceFee.ToString("N2")</strong>
+                        </p>
+
+                        <hr />
+
+                        <p class="booking-total">
+                            <span>Final total</span>
+                            <strong>Calculated when booking</strong>
+                        </p>
+                    </div>
+
+                    <button type="submit"
+                            class="booking-submit-button">
+                        Continue to booking
+                    </button>
+                </form>
+            </div>
+
+            <aside class="booking-property-card">
+                @if (property.Images != null &&
+                     property.Images.Any())
+                {
+                    <img src="@property.Images.First().ImageUrl"
+                         alt="@property.Title" />
+                }
+
+                <div class="booking-property-info">
+                    <span>@property.PropertyType</span>
+                    <h2>@property.Title</h2>
+                    <p>@property.City, South Africa</p>
+
+                    <hr />
+
+                    <p>
+                        <strong>R @property.PricePerNight.ToString("N2")</strong>
+                        per night
+                    </p>
+                </div>
+            </aside>
+        </div>
+    </div>
+}

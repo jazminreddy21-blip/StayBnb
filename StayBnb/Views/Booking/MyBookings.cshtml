@@ -1,0 +1,82 @@
+﻿
+@model IEnumerable<StayBnb.Models.Booking>
+
+@{
+    ViewData["Title"] = "My Bookings";
+}
+
+<div class="my-bookings-page">
+    <h1>My Bookings</h1>
+
+    <p class="my-bookings-subtitle">
+        View your reservations and check-in information.
+    </p>
+
+    @if (!Model.Any())
+    {
+        <div class="my-booking-card">
+            <p>You haven't made any bookings yet.</p>
+            <a asp-controller="Home"
+               asp-action="Index"
+               class="booking-instructions-button">
+                Explore stays
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="my-bookings-grid">
+            @foreach (var booking in Model)
+            {
+                <div class="my-booking-card">
+                    <h4>@(booking.Property?.Title ?? "Property")</h4>
+
+                    <p>
+                        <strong>Check-in:</strong>
+                        @booking.CheckInDate.ToString("dd MMM yyyy")
+                    </p>
+
+                    <p>
+                        <strong>Check-out:</strong>
+                        @booking.CheckOutDate.ToString("dd MMM yyyy")
+                    </p>
+
+                    <p>
+                        <strong>Guests:</strong>
+                        @booking.NumberOfGuests
+                    </p>
+
+                    <p>
+                        <strong>Total:</strong>
+                        R @booking.TotalPrice.ToString("N2")
+                    </p>
+
+                    <p>
+                        <strong>Status:</strong>
+                        <span class="booking-status">
+                            @booking.Status
+                        </span>
+                    </p>
+
+                    @if (booking.Status == "Confirmed")
+                    {
+                        <a asp-controller="Booking"
+                           asp-action="CheckInInstructions"
+                           asp-route-id="@booking.Id"
+                           class="booking-instructions-button">
+                            View Check-In Instructions
+                        </a>
+                    }
+                    else if (booking.Status == "Pending")
+                    {
+                        <p>
+                            Your booking is awaiting host approval.
+                            Check-in instructions will be available
+                            after confirmation.
+                        </p>
+                    }
+                </div>
+            }
+        </div>
+    }
+</div>

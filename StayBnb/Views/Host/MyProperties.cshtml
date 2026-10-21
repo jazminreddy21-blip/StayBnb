@@ -1,0 +1,84 @@
+﻿@model IEnumerable<StayBnb.Models.Property>
+
+@{
+    ViewData["Title"] = "My Properties";
+}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>My Properties</h2>
+            <p class="text-muted">
+                Manage your listings and their check-in instructions.
+            </p>
+        </div>
+
+        <a asp-controller="Property"
+           asp-action="Create"
+           class="btn btn-primary">
+            Add Property
+        </a>
+    </div>
+
+    @if (TempData["HostMessage"] != null)
+    {
+        <div class="alert alert-info">
+            @TempData["HostMessage"]
+        </div>
+    }
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body p-5 text-center">
+                <h5>No properties found</h5>
+                <p class="text-muted">
+                    Submit a property to start managing your listings.
+                </p>
+                <a asp-controller="Property"
+                   asp-action="Create"
+                   class="btn btn-primary">
+                    Submit a Property
+                </a>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var property in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card h-100 border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4">
+                            <h5 class="card-title">
+                                @property.Title
+                            </h5>
+
+                            <p class="text-muted mb-2">
+                                @property.City
+                            </p>
+
+                            <p>
+                                <strong>Status:</strong>
+                                @(property.IsActive ? "Approved" : "Pending approval")
+                            </p>
+
+                            <p class="mb-3">
+                                <strong>Price per night:</strong>
+                                @property.PricePerNight.ToString("C")
+                            </p>
+
+                            <a asp-controller="CheckIn"
+                               asp-action="Manage"
+                               asp-route-propertyId="@property.Id"
+                               class="btn btn-primary w-100">
+                                Manage Check-In
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

@@ -1,0 +1,36 @@
+﻿@{
+ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="container py-5">
+    <h1 class="mb-2">Admin Dashboard</h1>
+    <p class="text-muted mb-4">
+        Welcome to the StayBnb administration area.
+    </p>
+
+<div class="row g-4">
+    <div class="col-md-6">
+        <div class="card shadow-sm h-100">
+            <div class="card-body p-4">
+                <h5 class="card-title">Pending Properties</h5>
+                <p class="display-4 fw-bold">@ViewBag.PendingCount</p>
+                <p class="text-muted">
+                    Properties waiting for approval.
+                </p>
+
+                <a asp-controller="Admin"
+                   asp-action="Properties"
+                   class="btn btn-primary">
+                    Manage Properties
+                </a>
+                <a asp-controller="Admin"
+   asp-action="HostApplications"
+   class="btn btn-outline-secondary mt-2">
+    Review Host Applications
+</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>

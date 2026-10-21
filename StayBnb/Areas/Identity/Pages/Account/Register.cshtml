@@ -1,0 +1,113 @@
+@page
+@model RegisterModel
+
+@{
+    ViewData["Title"] = "Create your account";
+}
+
+<div class="staybnb-auth-page">
+    <div class="staybnb-auth-card">
+
+        <a asp-controller="Home"
+           asp-action="Index"
+           class="staybnb-auth-brand">
+            StayBnb
+        </a>
+
+        <h1>Create your account</h1>
+
+        <p class="staybnb-auth-subtitle">
+            Find your next getaway with StayBnb.
+        </p>
+
+        <form id="registerForm"
+              asp-route-returnUrl="@Model.ReturnUrl"
+              method="post">
+
+              <div class="booking-field">
+    <label asp-for="Input.FullName">
+        Full name
+    </label>
+
+    <input asp-for="Input.FullName"
+           class="form-control staybnb-auth-input"
+           autocomplete="name"
+           aria-required="true"
+           placeholder="Enter your full name" />
+
+    <span asp-validation-for="Input.FullName"
+          class="text-danger"></span>
+</div>
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger staybnb-validation"
+                 role="alert"></div>
+
+            <div class="booking-field">
+                <label asp-for="Input.Email">
+                    Email address
+                </label>
+
+                <input asp-for="Input.Email"
+                       class="form-control staybnb-auth-input"
+                       autocomplete="username"
+                       aria-required="true"
+                       placeholder="name@example.com" />
+
+                <span asp-validation-for="Input.Email"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="booking-field">
+                <label asp-for="Input.Password">
+                    Password
+                </label>
+
+                <input asp-for="Input.Password"
+                       class="form-control staybnb-auth-input"
+                       autocomplete="new-password"
+                       aria-required="true"
+                       placeholder="Create a password" />
+
+                <span asp-validation-for="Input.Password"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="booking-field">
+                <label asp-for="Input.ConfirmPassword">
+                    Confirm password
+                </label>
+
+                <input asp-for="Input.ConfirmPassword"
+                       class="form-control staybnb-auth-input"
+                       autocomplete="new-password"
+                       aria-required="true"
+                       placeholder="Enter your password again" />
+
+                <span asp-validation-for="Input.ConfirmPassword"
+                      class="text-danger"></span>
+            </div>
+
+            <button id="registerSubmit"
+                    type="submit"
+                    class="staybnb-auth-button">
+                Create account
+            </button>
+
+            <div class="staybnb-auth-links">
+                <p>
+                    Already have an account?
+                    <a asp-page="./Login"
+                       asp-route-returnUrl="@Model.ReturnUrl">
+                        Log in
+                    </a>
+                </p>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

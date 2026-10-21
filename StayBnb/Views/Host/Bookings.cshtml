@@ -1,0 +1,120 @@
+﻿
+@model IEnumerable<StayBnb.Models.Booking>
+
+@{
+    ViewData["Title"] = "Host Bookings";
+}
+
+<div class="staybnb-booking-page">
+    <h1>Booking requests</h1>
+
+    <p class="booking-subtitle">
+        Manage reservations for your properties.
+    </p>
+
+    @if (TempData["HostMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["HostMessage"]
+        </div>
+    }
+
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Property</th>
+                        <th>Guest</th>
+                        <th>Check-in</th>
+                        <th>Check-out</th>
+                        <th>Guests</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var booking in Model)
+                    {
+                        <tr>
+                            <td>
+                                @(booking.Property?.Title ?? "Property unavailable")
+                            </td>
+
+                            <td>
+                                @(booking.Guest?.Email ?? "Guest")
+                            </td>
+
+                            <td>
+                                @booking.CheckInDate.ToString("dd MMM yyyy")
+                            </td>
+
+                            <td>
+                                @booking.CheckOutDate.ToString("dd MMM yyyy")
+                            </td>
+
+                            <td>@booking.NumberOfGuests</td>
+
+                            <td>
+                                R @booking.TotalPrice.ToString("N2")
+                            </td>
+
+                            <td>
+                                <strong>@booking.Status</strong>
+                            </td>
+
+                            <td>
+                                @if (booking.Status == "Pending")
+                                {
+                                    <form asp-controller="Host"
+                                          asp-action="Approve"
+                                          asp-route-id="@booking.Id"
+                                          method="post"
+                                          style="margin-bottom: 8px;">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <button type="submit"
+                                                class="btn btn-success">
+                                            Approve
+                                        </button>
+                                    </form>
+
+                                    <form asp-controller="Host"
+                                          asp-action="Reject"
+                                          asp-route-id="@booking.Id"
+                                          method="post">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <button type="submit"
+                                                class="btn btn-danger">
+                                            Reject
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <span>Processed</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="booking-form-card">
+            <h2>No booking requests yet</h2>
+            <p>
+                When guests book your properties,
+                their requests will appear here.
+            </p>
+        </div>
+    }
+</div>

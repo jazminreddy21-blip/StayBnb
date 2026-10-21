@@ -1,0 +1,55 @@
+﻿@model IEnumerable<StayBnb.Models.HostApplication>
+
+@{
+    ViewData["Title"] = "My Host Applications";
+}
+
+<div class="container py-5">
+    <h1 class="mb-2">My Host Applications</h1>
+
+    <p class="text-muted mb-4">
+        Track the status of your host applications.
+    </p>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            You have no host applications yet.
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var application in Model)
+            {
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                @(application.Property?.Title ?? "Property application")
+                            </h5>
+
+                            <p>
+                                <strong>Submitted:</strong>
+                                @application.SubmittedAt.ToLocalTime().ToString("dd MMM yyyy")
+                            </p>
+
+                            <p>
+                                <strong>Status:</strong>
+                                @application.Status
+                            </p>
+
+                            @if (application.ReviewNotes != null)
+                            {
+                                <p>
+                                    <strong>Review notes:</strong>
+                                    @application.ReviewNotes
+                                </p>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

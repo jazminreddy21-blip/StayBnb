@@ -1,0 +1,76 @@
+﻿@model StayBnb.Models.Property
+
+@{
+    ViewData["Title"] = Model.Title;
+}
+
+<div class="property-details-page">
+    <a asp-controller="Home" asp-action="Index" class="back-link">
+        &larr; Back to stays
+    </a>
+
+    <div class="property-details-heading">
+        <div>
+            <h1>@Model.Title</h1>
+            <p>@Model.City, South Africa</p>
+        </div>
+        <span class="property-type-badge">@Model.PropertyType</span>
+    </div>
+
+    @if (Model.Images != null && Model.Images.Any())
+    {
+        <div class="property-details-image">
+            <img src="@Model.Images.First().ImageUrl"
+                 alt="@Model.Title" />
+        </div>
+    }
+
+    <div class="property-details-content">
+        <div class="property-description">
+            <h2>About this stay</h2>
+            <p>@Model.Description</p>
+
+            <hr />
+
+            <h2>Location</h2>
+            <p>@Model.Address, @Model.City</p>
+
+            
+<hr />
+
+<h2>Check-in information</h2>
+
+@if (!string.IsNullOrWhiteSpace(ViewBag.RequiredDocuments as string))
+{
+    <p><strong>Documents required from guests:</strong></p>
+    <p>@ViewBag.RequiredDocuments</p>
+}
+else
+{
+    <p>Check-in information has not been added yet.</p>
+}
+        </div>
+
+        <div class="property-price-card">
+            <h3>R @Model.PricePerNight.ToString("N2") <small>/ night</small></h3>
+
+            <hr />
+
+            <p>Cleaning fee <strong>R @Model.CleaningFee.ToString("N2")</strong></p>
+            <p>Service fee <strong>R @Model.ServiceFee.ToString("N2")</strong></p>
+
+            <hr />
+
+            <p class="price-note">
+                Fees are additional to the nightly price.
+            </p>
+
+<a asp-controller="Booking"
+   asp-action="Create"
+   asp-route-propertyId="@Model.Id"
+   class="btn staybnb-book-button">
+    Book this property
+</a>
+        </div>
+    </div>
+</div>

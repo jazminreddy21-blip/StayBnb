@@ -1,0 +1,148 @@
+﻿@model IEnumerable<StayBnb.Models.Property>
+
+@{
+    ViewData["Title"] = "Explore Stays";
+}
+
+<div class="staybnb-browse container-fluid">
+
+    <!-- Property categories -->
+    <div class="staybnb-categories">
+        <a href="@Url.Action("Index", new { city = ViewBag.City })"
+           class="staybnb-category active">
+            <span class="category-symbol">⌂</span>
+            <span>All stays</span>
+        </a>
+
+        <a href="@Url.Action("Index", new { city = ViewBag.City })"
+           class="staybnb-category">
+            <span class="category-symbol">⌘</span>
+            <span>Homes</span>
+        </a>
+
+        <a href="@Url.Action("Index", new { city = ViewBag.City })"
+           class="staybnb-category">
+            <span class="category-symbol">☼</span>
+            <span>Getaways</span>
+        </a>
+
+        <a href="@Url.Action("Index", new { city = ViewBag.City })"
+           class="staybnb-category">
+            <span class="category-symbol">♡</span>
+            <span>Unique stays</span>
+        </a>
+    </div>
+
+    <!-- Results heading -->
+    <div class="staybnb-results-heading">
+        <div>
+            <h1>
+                @if (!string.IsNullOrWhiteSpace(ViewBag.City as string))
+                {
+                    <span>Stays in @ViewBag.City</span>
+                }
+                else
+                {
+                    <span>Explore stays</span>
+                }
+            </h1>
+
+            <p>Find a place for your next getaway.</p>
+        </div>
+    </div>
+
+    <!-- Property cards -->
+    @if (Model.Any())
+    {
+        <div class="staybnb-property-grid">
+            @foreach (var property in Model)
+            {
+                var image = property.Images?
+                    .FirstOrDefault()?.ImageUrl;
+
+                <article class="staybnb-property-card">
+
+                    <a asp-controller="Property"
+                       asp-action="Details"
+                       asp-route-id="@property.Id"
+                       class="staybnb-property-image-link">
+
+                        @if (!string.IsNullOrWhiteSpace(image))
+                        {
+                            <img src="@image"
+                                 alt="@property.Title"
+                                 class="staybnb-property-image" />
+                        }
+                        else
+                        {
+                            <div class="staybnb-no-image">
+                                <span>♡</span>
+                                <p>Photo coming soon</p>
+                            </div>
+                        }
+                    </a>
+
+                    <button type="button"
+                            class="staybnb-favourite"
+                            aria-label="Favourite @property.Title">
+                        ♡
+                    </button>
+
+                    <div class="staybnb-property-info">
+                        <div class="staybnb-property-title-row">
+                            <h2>@property.City</h2>
+                            <span class="staybnb-rating">
+                                <span>★</span> New
+                            </span>
+                        </div>
+
+                        <p class="staybnb-property-type">
+                            @property.Title
+                        </p>
+
+                        <p class="staybnb-property-description">
+                            @property.PropertyType
+                        </p>
+
+                        <p class="staybnb-property-price">
+                            <strong>
+                                R @property.PricePerNight.ToString("N2")
+                            </strong>
+                            <span>night</span>
+                        </p>
+                    </div>
+                </article>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="staybnb-empty-state">
+            <div class="staybnb-empty-icon">⌂</div>
+
+            <h2>No available stays just yet</h2>
+
+            @if (!string.IsNullOrWhiteSpace(ViewBag.City as string))
+            {
+                <p>
+                    We couldn't find active properties in
+                    <strong>@ViewBag.City</strong>.
+                    Try searching another destination.
+                </p>
+
+                <a asp-controller="Home"
+                   asp-action="Index"
+                   class="staybnb-clear-search">
+                    Explore all stays
+                </a>
+            }
+            else
+            {
+                <p>
+                    Published properties will appear here when hosts
+                    add their listings and activate them.
+                </p>
+            }
+        </div>
+    }
+</div>

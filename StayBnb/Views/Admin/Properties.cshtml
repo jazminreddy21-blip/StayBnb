@@ -1,0 +1,122 @@
+﻿@model IEnumerable<StayBnb.Models.Property>
+
+@{
+    ViewData["Title"] = "Manage Properties";
+}
+
+<div class="container py-5">
+   <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+    <div>
+        <h1 class="mb-2">Manage Properties</h1>
+        <p class="text-muted mb-0">
+            Review property submissions waiting for approval.
+        </p>
+    </div>
+
+<a asp-controller="Admin"
+   asp-action="Dashboard"
+   class="btn btn-outline-secondary">
+    Back to Dashboard
+</a>
+
+</div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            There are no properties waiting for approval.
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var property in Model)
+            {
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card h-100 shadow-sm">
+
+                        @if (property.Images != null &&
+                             property.Images.Any())
+                        {
+                            <img src="@property.Images.First().ImageUrl"
+                                 class="card-img-top"
+                                 alt="@property.Title"
+                                 style="height: 220px; object-fit: cover;" />
+                        }
+                        else
+                        {
+                            <div class="bg-light d-flex align-items-center justify-content-center"
+                                 style="height: 220px;">
+                                <span>No image uploaded</span>
+                            </div>
+                        }
+
+                        <div class="card-body">
+                            <h5 class="card-title">@property.Title</h5>
+
+                            <p class="text-muted mb-2">
+                                @property.City
+                            </p>
+
+                            <p>@property.Description</p>
+
+                            <p>
+                                <strong>Type:</strong>
+                                @property.PropertyType
+                            </p>
+
+                            <p>
+                                <strong>Price per night:</strong>
+                                R @property.PricePerNight
+                            </p>
+
+                            <span class="badge bg-warning text-dark">
+                                Pending approval
+                            </span>
+                            
+<div class="d-flex gap-2 mt-3">
+
+    <form asp-controller="Admin"
+          asp-action="Approve"
+          method="post"
+          class="flex-fill">
+
+        @Html.AntiForgeryToken()
+
+        <input type="hidden"
+               name="id"
+               value="@property.Id" />
+
+        <button type="submit"
+                class="btn btn-success w-100">
+            Approve
+        </button>
+    </form>
+
+    <form asp-controller="Admin"
+          asp-action="Reject"
+          method="post"
+          class="flex-fill"
+          onsubmit="return confirm('Are you sure you want to reject and remove this property?');">
+
+        @Html.AntiForgeryToken()
+
+        <input type="hidden"
+               name="id"
+               value="@property.Id" />
+
+        <button type="submit"
+                class="btn btn-danger w-100">
+            Reject
+        </button>
+    </form>
+
+</div>
+
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

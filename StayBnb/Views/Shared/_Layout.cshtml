@@ -1,0 +1,168 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - StayBnb</title>
+
+    <script type="importmap"></script>
+
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="~/StayBnb.styles.css"
+          asp-append-version="true" />
+</head>
+
+<body>
+    <header class="staybnb-header">
+        <nav class="staybnb-navbar">
+            <div class="staybnb-navbar-inner">
+
+                <!-- Logo -->
+                <a class="staybnb-logo"
+                   asp-controller="Home"
+                   asp-action="Index">
+                    <span class="staybnb-logo-icon">♥</span>
+                    <span>staybnb</span>
+                </a>
+
+                <!-- Main navigation -->
+                <div class="staybnb-nav-center">
+                    <a asp-controller="Home"
+                       asp-action="Index"
+                       class="staybnb-nav-link active">
+                        Stays
+                    </a>
+
+                    <a href="#explore"
+                       class="staybnb-nav-link">
+                        Explore
+                    </a>
+                </div>
+
+                <!-- Account actions -->
+       <div class="staybnb-nav-right">
+    <a class="staybnb-host-link"
+       asp-controller="Property"
+       asp-action="Create">
+        Become a host
+    </a>
+
+    <a class="staybnb-host-link"
+   asp-controller="Booking"
+   asp-action="MyBookings">
+    My Bookings
+</a>
+
+    <a class="staybnb-host-link"
+   asp-controller="HostApplication"
+   asp-action="Index">
+    My Host Applications
+</a>
+
+@if (User.IsInRole("Host"))
+{
+    <a class="staybnb-host-link"
+       asp-controller="Host"
+       asp-action="MyProperties">
+        My Properties
+    </a>
+}
+
+
+<a class="staybnb-host-link"
+   asp-controller="Admin"
+   asp-action="Dashboard">
+    Admin Dashboard
+</a>
+
+<partial name="_LoginPartial" />
+
+</div>
+                    <partial name="_LoginPartial" />
+                </div>
+
+            </div>
+        </nav>
+
+        <!-- Search bar -->
+        <div class="staybnb-search-wrapper">
+            <form class="staybnb-search"
+                  asp-controller="Home"
+                  asp-action="Index"
+                  method="get">
+
+                <div class="staybnb-search-field destination-field">
+                    <label for="navDestination">Where</label>
+                    <input id="navDestination"
+                           name="city"
+                           type="text"
+                           placeholder="Search destinations" />
+                </div>
+
+                <div class="staybnb-search-separator"></div>
+
+                <div class="staybnb-search-field">
+                    <label for="navCheckIn">Check in</label>
+                    <input id="navCheckIn"
+                           name="checkIn"
+                           type="date" />
+                </div>
+
+                <div class="staybnb-search-separator"></div>
+
+                <div class="staybnb-search-field">
+                    <label for="navCheckOut">Check out</label>
+                    <input id="navCheckOut"
+                           name="checkOut"
+                           type="date" />
+                </div>
+
+                <div class="staybnb-search-separator"></div>
+
+                <div class="staybnb-search-field guests-field">
+                    <label for="navGuests">Who</label>
+                    <select id="navGuests" name="guests">
+                        <option value="1">1 guest</option>
+                        <option value="2" selected>2 guests</option>
+                        <option value="3">3 guests</option>
+                        <option value="4">4 guests</option>
+                        <option value="5">5+ guests</option>
+                    </select>
+                </div>
+
+                <button class="staybnb-search-button"
+                        type="submit"
+                        aria-label="Search stays">
+                    <span>⌕</span>
+                </button>
+
+            </form>
+        </div>
+    </header>
+
+    <main role="main">
+        @RenderBody()
+    </main>
+
+    <footer class="staybnb-footer">
+        <div class="container">
+            <span>© 2026 StayBnb</span>
+            <a asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

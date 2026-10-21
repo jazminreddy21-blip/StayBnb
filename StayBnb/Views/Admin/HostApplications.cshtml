@@ -1,0 +1,111 @@
+﻿@model IEnumerable<StayBnb.Models.HostApplication>
+
+@{
+    ViewData["Title"] = "Host Applications";
+}
+
+<div class="container py-5">
+    <h1 class="mb-2">Host Applications</h1>
+    <p class="text-muted mb-4">
+        Review requests from users who want to become hosts.
+    </p>
+
+    <a asp-controller="Admin"
+       asp-action="Dashboard"
+       class="btn btn-outline-secondary mb-4">
+        Back to Dashboard
+    </a>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">
+            There are no pending host applications.
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var application in Model)
+            {
+                <div class="col-12 col-md-6 col-lg-4">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">
+                                @(application.User?.FullName
+                                  ?? application.User?.Email
+                                  ?? "Unknown applicant")
+                            </h5>
+
+                            <p>
+                                <strong>Email:</strong>
+                                @(application.User?.Email ?? "Not available")
+                            </p>
+
+                            <p>
+                                <strong>Property:</strong>
+                                @(application.Property?.Title ?? "Not available")
+                            </p>
+
+                            <p>
+                                <strong>Submitted:</strong>
+                                @application.SubmittedAt.ToLocalTime()
+                                    .ToString("dd MMM yyyy")
+                            </p>
+
+                            <span class="badge bg-warning text-dark">
+                                @application.Status
+                            </span>
+
+                            @if (application.Status == "Pending")
+{
+    <div class="d-grid gap-2 mt-3">
+        <form asp-controller="Admin"
+              asp-action="ApproveHostApplication"
+              method="post">
+            @Html.AntiForgeryToken()
+
+            <input type="hidden"
+                   name="id"
+                   value="@application.Id" />
+
+            <button type="submit"
+                    class="btn btn-success w-100">
+                Approve Host Application
+            </button>
+        </form>
+
+        <form asp-controller="Admin"
+              asp-action="RejectHostApplication"
+              method="post">
+            @Html.AntiForgeryToken()
+
+            <input type="hidden"
+                   name="id"
+                   value="@application.Id" />
+
+            <label class="form-label"
+                   for="notes-@application.Id">
+                Rejection notes (optional)
+            </label>
+
+            <textarea class="form-control mb-2"
+                      id="notes-@application.Id"
+                      name="reviewNotes"
+                      rows="2"
+                      placeholder="Explain the reason for rejection"></textarea>
+
+            <button type="submit"
+                    class="btn btn-danger w-100">
+                Reject Application
+            </button>
+        </form>
+    </div>
+}
+
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

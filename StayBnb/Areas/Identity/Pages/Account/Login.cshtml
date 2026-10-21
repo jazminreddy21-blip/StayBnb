@@ -1,0 +1,92 @@
+@page
+@model LoginModel
+
+@{
+    ViewData["Title"] = "Welcome back";
+}
+
+<div class="staybnb-auth-page">
+    <div class="staybnb-auth-card">
+
+        <a asp-controller="Home"
+           asp-action="Index"
+           class="staybnb-auth-brand">
+            StayBnb
+        </a>
+
+        <h1>@ViewData["Title"]</h1>
+
+        <p class="staybnb-auth-subtitle">
+            Sign in to continue your getaway.
+        </p>
+
+        <form id="account" method="post">
+
+            <div asp-validation-summary="ModelOnly"
+                 class="text-danger staybnb-validation"
+                 role="alert"></div>
+
+            <div class="booking-field">
+                <label asp-for="Input.Email">Email address</label>
+                <input asp-for="Input.Email"
+                       class="form-control staybnb-auth-input"
+                       autocomplete="username"
+                       aria-required="true"
+                       placeholder="name@example.com" />
+                <span asp-validation-for="Input.Email"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="booking-field">
+                <label asp-for="Input.Password">Password</label>
+                <input asp-for="Input.Password"
+                       class="form-control staybnb-auth-input"
+                       autocomplete="current-password"
+                       aria-required="true"
+                       placeholder="Enter your password" />
+                <span asp-validation-for="Input.Password"
+                      class="text-danger"></span>
+            </div>
+
+            <div class="staybnb-remember">
+                <input asp-for="Input.RememberMe"
+                       class="form-check-input" />
+                <label asp-for="Input.RememberMe">
+                    Remember me
+                </label>
+            </div>
+
+            <button id="login-submit"
+                    type="submit"
+                    class="staybnb-auth-button">
+                Log in
+            </button>
+
+            <div class="staybnb-auth-links">
+                <p>
+                    <a asp-page="./ForgotPassword">
+                        Forgot your password?
+                    </a>
+                </p>
+
+                <p>
+                    New to StayBnb?
+                    <a asp-page="./Register"
+                       asp-route-returnUrl="@Model.ReturnUrl">
+                        Create an account
+                    </a>
+                </p>
+
+                <p>
+                    <a asp-page="./ResendEmailConfirmation">
+                        Resend confirmation email
+                    </a>
+                </p>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
