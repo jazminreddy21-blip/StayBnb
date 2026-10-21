@@ -9,13 +9,14 @@
     <h1>My Bookings</h1>
 
     <p class="my-bookings-subtitle">
-        View your reservations and check-in information.
+        View your reservations, upload required documents and check-in information.
     </p>
 
     @if (!Model.Any())
     {
         <div class="my-booking-card">
             <p>You haven't made any bookings yet.</p>
+
             <a asp-controller="Home"
                asp-action="Index"
                class="booking-instructions-button">
@@ -66,13 +67,34 @@
                            class="booking-instructions-button">
                             View Check-In Instructions
                         </a>
+
+                        <a asp-controller="GuestDocument"
+                           asp-action="Upload"
+                           asp-route-bookingId="@booking.Id"
+                           class="booking-instructions-button">
+                            Upload Required Documents
+                        </a>
+
+                        <a asp-controller="GuestDocument"
+                           asp-action="MyDocuments"
+                           asp-route-bookingId="@booking.Id"
+                           class="booking-instructions-button">
+                            View My Uploaded Documents
+                        </a>
                     }
                     else if (booking.Status == "Pending")
                     {
                         <p>
                             Your booking is awaiting host approval.
-                            Check-in instructions will be available
-                            after confirmation.
+                            Check-in instructions and document upload
+                            will be available after confirmation.
+                        </p>
+                    }
+                    else
+                    {
+                        <p>
+                            This booking is not confirmed.
+                            Contact your host if you need further information.
                         </p>
                     }
                 </div>

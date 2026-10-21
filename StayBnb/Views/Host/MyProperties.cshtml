@@ -1,5 +1,4 @@
-﻿
-@model IEnumerable<StayBnb.Models.Property>
+﻿@model IEnumerable<StayBnb.Models.Property>
 
 @{
     ViewData["Title"] = "My Properties";
@@ -18,6 +17,12 @@
                asp-action="Bookings"
                class="host-btn host-btn-outline">
                 Manage Bookings
+            </a>
+
+            <a asp-controller="GuestDocument"
+               asp-action="Review"
+               class="host-btn host-btn-outline">
+                Review Guest Documents
             </a>
 
             <a asp-controller="Property"

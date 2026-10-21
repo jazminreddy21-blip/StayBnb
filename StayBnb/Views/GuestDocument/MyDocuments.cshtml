@@ -1,0 +1,56 @@
+﻿
+@model IEnumerable<StayBnb.Models.GuestDocument>
+
+@{
+    ViewData["Title"] = "My Uploaded Documents";
+}
+
+<div class="document-page">
+    <a asp-controller="Booking"
+       asp-action="MyBookings"
+       class="document-back">
+        &larr; Back to My Bookings
+    </a>
+
+    <div class="document-card">
+        <span class="document-eyebrow">BOOKING DOCUMENTS</span>
+        <h1>My Uploaded Documents</h1>
+        <p class="document-subtitle">@ViewBag.PropertyTitle</p>
+
+        @if (TempData["DocumentMessage"] != null)
+        {
+            <div class="document-notice">
+                @TempData["DocumentMessage"]
+            </div>
+        }
+
+        @if (!Model.Any())
+        {
+            <p>You haven't uploaded any documents for this booking yet.</p>
+        }
+        else
+        {
+            @foreach (var document in Model)
+            {
+                <div class="document-property">
+                    <strong>@document.DocumentType</strong>
+                    <span>Uploaded: @document.UploadedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm")</span>
+                    <span>Status: <strong>@document.Status</strong></span>
+
+                    @if (!string.IsNullOrWhiteSpace(document.VerificationNotes))
+                    {
+                        <span>Review notes: @document.VerificationNotes</span>
+                    }
+                </div>
+            }
+        }
+
+        <a asp-controller="GuestDocument"
+           asp-action="Upload"
+           asp-route-bookingId="@ViewBag.BookingId"
+           class="document-submit"
+           style="display:block; box-sizing:border-box; text-align:center; text-decoration:none; margin-top:20px;">
+            Upload Another Document
+        </a>
+    </div>
+</div>

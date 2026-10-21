@@ -1,0 +1,128 @@
+﻿@model IEnumerable<StayBnb.Models.GuestDocument>
+
+@{
+ViewData["Title"] = "Review Guest Documents";
+}
+
+<div class="document-page">
+    <a asp-controller="Host"
+       asp-action="MyProperties"
+       class="document-back">
+        &larr; Back to My Properties
+    </a>
+
+<div class="document-card">
+    <span class="document-eyebrow">HOST MANAGEMENT</span>
+    <h1>Review Guest Documents</h1>
+
+    <p class="document-subtitle">
+        Review the documents guests have uploaded for bookings at your properties.
+    </p>
+
+    @if (TempData["DocumentReviewMessage"] != null)
+    {
+        <div class="document-notice">
+            @TempData["DocumentReviewMessage"]
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <p>No guest documents have been uploaded yet.</p>
+    }
+    else
+    {
+        @foreach (var document in Model)
+        {
+            <div class="document-property">
+                <h3>@document.DocumentType</h3>
+
+                <p>
+                    <strong>Property:</strong>
+                    @(document.Booking?.Property?.Title ?? "Unknown property")
+                </p>
+
+                <p>
+                    <strong>Guest:</strong>
+                    @(document.Guest?.FullName ?? "Guest")
+                </p>
+
+                <p>
+                    <strong>Booking reference:</strong>
+                    @document.BookingId
+                </p>
+
+                <p>
+                    <strong>Uploaded:</strong>
+                    @document.UploadedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm")
+                </p>
+
+                <p>
+                    <strong>Status:</strong>
+                    <span>@document.Status</span>
+                </p>
+
+                <p>
+                    <a asp-controller="GuestDocument"
+                       asp-action="ViewDocument"
+                       asp-route-id="@document.Id"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       class="document-back">
+                        View Uploaded File
+                    </a>
+                </p>
+
+                @if (!string.IsNullOrWhiteSpace(document.VerificationNotes))
+                {
+                    <p>
+                        <strong>Review notes:</strong>
+                        @document.VerificationNotes
+                    </p>
+                }
+
+                <form asp-controller="GuestDocument"
+                      asp-action="Verify"
+                      method="post">
+
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden"
+                           name="id"
+                           value="@document.Id" />
+
+                    <div class="document-field">
+                        <label for="notes-@document.Id">
+                            Notes for the guest
+                        </label>
+
+                        <textarea id="notes-@document.Id"
+                                  name="verificationNotes"
+                                  rows="3"
+                                  placeholder="Optional review notes">@document.VerificationNotes</textarea>
+                    </div>
+
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <button type="submit"
+                                name="status"
+                                value="Verified"
+                                class="document-submit"
+                                style="width:auto;">
+                            Mark Verified
+                        </button>
+
+                        <button type="submit"
+                                name="status"
+                                value="Rejected"
+                                class="document-submit"
+                                style="width:auto; background:#8b354e;">
+                            Reject Document
+                        </button>
+                    </div>
+                </form>
+            </div>
+        }
+    }
+</div>
+
+</div>

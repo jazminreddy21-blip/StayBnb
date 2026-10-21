@@ -1,0 +1,79 @@
+﻿
+@{
+    ViewData["Title"] = "Upload Guest Document";
+}
+
+<div class="document-page">
+    <a asp-controller="Booking"
+       asp-action="MyBookings"
+       class="document-back">
+        &larr; Back to My Bookings
+    </a>
+
+    <div class="document-card">
+        <div class="document-icon">♡</div>
+
+        <span class="document-eyebrow">BOOKING DOCUMENTS</span>
+        <h1>Upload a Document</h1>
+
+        <p class="document-subtitle">
+            Upload the documents your host requires for your stay.
+        </p>
+
+        <div class="document-property">
+            <span>Property</span>
+            <strong>@ViewBag.PropertyTitle</strong>
+        </div>
+
+        <div class="document-notice">
+            Your document will be marked as pending until it has been reviewed.
+        </div>
+
+        <form asp-controller="GuestDocument"
+              asp-action="Upload"
+              method="post"
+              enctype="multipart/form-data">
+
+            @Html.AntiForgeryToken()
+
+            <input type="hidden"
+                   name="bookingId"
+                   value="@ViewBag.BookingId" />
+
+            <div asp-validation-summary="All"
+                 class="document-validation"></div>
+
+            <div class="document-field">
+                <label for="documentType">Document type</label>
+                <select id="documentType"
+                        name="documentType"
+                        required>
+                    <option value="">Select a document</option>
+                    <option value="Identity Document">Identity Document</option>
+                    <option value="Passport">Passport</option>
+                    <option value="Proof of Booking">Proof of Booking</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="document-field">
+                <label for="file">Choose your file</label>
+                <input type="file"
+                       id="file"
+                       name="file"
+                       accept=".pdf,.jpg,.jpeg,.png"
+                       required />
+
+                <small>PDF, JPG or PNG. Maximum file size: 5 MB.</small>
+            </div>
+
+            <button type="submit" class="document-submit">
+                Upload Document
+            </button>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
