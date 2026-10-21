@@ -4,8 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using StayBnb.Data;
 using StayBnb.Models;
 using System.Security.Claims;
-using System.Linq;
-using Microsoft.AspNetCore.Authorization;
 
 namespace StayBnb.Controllers
 {
@@ -19,7 +17,6 @@ namespace StayBnb.Controllers
             _context = context;
         }
 
-        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Create(int propertyId)
         {
@@ -36,8 +33,7 @@ namespace StayBnb.Controllers
 
             return View();
         }
-        
-        [Authorize]
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
@@ -84,10 +80,10 @@ namespace StayBnb.Controllers
             }
 
             var hasConflict = await _context.Bookings.AnyAsync(b =>
-    b.PropertyId == property.Id &&
-    (b.Status == "Pending" || b.Status == "Confirmed") &&
-    checkInDate.Date < b.CheckOutDate &&
-    checkOutDate.Date > b.CheckInDate);
+                b.PropertyId == property.Id &&
+                (b.Status == "Pending" || b.Status == "Confirmed") &&
+                checkInDate.Date < b.CheckOutDate &&
+                checkOutDate.Date > b.CheckInDate);
 
             if (hasConflict)
             {
@@ -98,8 +94,9 @@ namespace StayBnb.Controllers
                 return View();
             }
 
-            var nights = (checkOutDate.Date -
-                          checkInDate.Date).Days;
+            var nights = (
+                checkOutDate.Date - checkInDate.Date
+            ).Days;
 
             var totalPrice =
                 (property.PricePerNight * nights)
@@ -126,8 +123,26 @@ namespace StayBnb.Controllers
                 CreatedAt = DateTime.UtcNow
             };
 
+            // 1. Save the booking.
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync();
+
+            // 2. Notify the host who owns this property.
+            if (!string.IsNullOrWhiteSpace(property.HostId))
+            {
+                var notification = new Notification
+                {
+                    UserId = property.HostId,
+                    Title = "New Booking Request",
+                    Content = $"You have received a new booking request for {property.Title}.",
+                    LinkUrl = "/Host/Bookings",
+                    IsRead = false,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                _context.Notifications.Add(notification);
+                await _context.SaveChangesAsync();
+            }
 
             return View("Confirmation", booking);
         }
@@ -135,7 +150,8 @@ namespace StayBnb.Controllers
         [HttpGet]
         public async Task<IActionResult> CheckInInstructions(int id)
         {
-            var guestId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var guestId = User.FindFirstValue(
+                ClaimTypes.NameIdentifier);
 
             var booking = await _context.Bookings
                 .Include(b => b.Property)
@@ -155,7 +171,8 @@ namespace StayBnb.Controllers
 
             if (instructions == null)
             {
-                return NotFound("The host has not added check-in instructions yet.");
+                return NotFound(
+                    "The host has not added check-in instructions yet.");
             }
 
             return View(instructions);
@@ -164,7 +181,8 @@ namespace StayBnb.Controllers
         [HttpGet]
         public async Task<IActionResult> MyBookings()
         {
-            var guestId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var guestId = User.FindFirstValue(
+                ClaimTypes.NameIdentifier);
 
             var bookings = await _context.Bookings
                 .Include(b => b.Property)

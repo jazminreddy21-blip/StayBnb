@@ -216,9 +216,6 @@ namespace StayBnb.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Host,Admin,SuperAdmin")]
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Host,Admin,SuperAdmin")]
         public async Task<IActionResult> Verify(
     int id,
     string status,

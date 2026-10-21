@@ -1,10 +1,9 @@
-﻿
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StayBnb.Data;
+using StayBnb.Models;
 using System.Security.Claims;
-using System.Linq;
 
 namespace StayBnb.Controllers
 {
@@ -19,6 +18,7 @@ namespace StayBnb.Controllers
         }
 
         // Display bookings for properties owned by the logged-in host
+        [Authorize(Roles = "Host")]
         public async Task<IActionResult> Bookings()
         {
             var hostId = User.FindFirstValue(
@@ -35,9 +35,10 @@ namespace StayBnb.Controllers
             return View(bookings);
         }
 
-        // Approve a pending booking
+        // Approve a pending booking and notify the guest
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Host")]
         public async Task<IActionResult> Approve(int id)
         {
             var hostId = User.FindFirstValue(
@@ -65,6 +66,18 @@ namespace StayBnb.Controllers
 
             booking.Status = "Confirmed";
 
+            var notification = new Notification
+            {
+                UserId = booking.GuestId,
+                Title = "Booking Confirmed",
+                Content = $"Your booking for {booking.Property!.Title} has been approved by the host.",
+                LinkUrl = "/Booking/MyBookings",
+                IsRead = false,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.Notifications.Add(notification);
+
             await _context.SaveChangesAsync();
 
             TempData["HostMessage"] =
@@ -73,9 +86,10 @@ namespace StayBnb.Controllers
             return RedirectToAction(nameof(Bookings));
         }
 
-        // Reject a pending booking
+        // Reject a pending booking and notify the guest
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Host")]
         public async Task<IActionResult> Reject(int id)
         {
             var hostId = User.FindFirstValue(
@@ -103,6 +117,18 @@ namespace StayBnb.Controllers
 
             booking.Status = "Rejected";
 
+            var notification = new Notification
+            {
+                UserId = booking.GuestId,
+                Title = "Booking Update",
+                Content = $"Your booking for {booking.Property!.Title} was rejected by the host.",
+                LinkUrl = "/Booking/MyBookings",
+                IsRead = false,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            _context.Notifications.Add(notification);
+
             await _context.SaveChangesAsync();
 
             TempData["HostMessage"] =
@@ -110,7 +136,6 @@ namespace StayBnb.Controllers
 
             return RedirectToAction(nameof(Bookings));
         }
-
 
         // Display properties belonging to the logged-in host
         [Authorize(Roles = "Host")]

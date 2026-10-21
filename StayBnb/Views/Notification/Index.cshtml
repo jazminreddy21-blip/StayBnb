@@ -1,0 +1,92 @@
+﻿@model IEnumerable<StayBnb.Models.Notification>
+
+@{
+ViewData["Title"] = "My Notifications";
+}
+
+<div class="document-page">
+    <a asp-controller="Home"
+       asp-action="Index"
+       class="document-back">
+        &larr; Back to StayBnb
+    </a>
+
+<div class="document-card">
+    <span class="document-eyebrow">YOUR STAYBNB ACCOUNT</span>
+    <h1>My Notifications</h1>
+
+    <p class="document-subtitle">
+        Stay up to date with your bookings, property applications and document reviews.
+    </p>
+
+    @if (!Model.Any())
+    {
+        <div class="document-notice">
+            You're all caught up! You don't have any notifications yet.
+        </div>
+    }
+    else
+    {
+        @foreach (var notification in Model)
+        {
+            <div class="document-property"
+                 style="border-left:4px solid @(notification.IsRead ? "#e7c9d6" : "#c44e7b");">
+
+                <div style="display:flex; justify-content:space-between; align-items:start; gap:12px; flex-wrap:wrap;">
+                    <h3>@notification.Title</h3>
+
+                    @if (!notification.IsRead)
+                    {
+                        <span style="background:#fde8f0; color:#a13d68; padding:5px 10px; border-radius:20px; font-size:12px; font-weight:700;">
+                            NEW
+                        </span>
+                    }
+                    else
+                    {
+                        <span style="color:#876d7a; font-size:12px;">
+                            Read
+                        </span>
+                    }
+                </div>
+
+                <p>@notification.Content</p>
+
+                <small style="color:#876d7a;">
+                    @notification.CreatedAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm")
+                </small>
+
+                <div style="display:flex; gap:12px; flex-wrap:wrap; margin-top:15px;">
+                    @if (!string.IsNullOrWhiteSpace(notification.LinkUrl))
+                    {
+                        <a href="@notification.LinkUrl"
+                           class="document-back">
+                            View Details
+                        </a>
+                    }
+
+                    @if (!notification.IsRead)
+                    {
+                        <form asp-controller="Notification"
+                              asp-action="MarkAsRead"
+                              method="post">
+
+                            @Html.AntiForgeryToken()
+
+                            <input type="hidden"
+                                   name="id"
+                                   value="@notification.Id" />
+
+                            <button type="submit"
+                                    class="document-submit"
+                                    style="width:auto; padding:10px 16px;">
+                                Mark as Read
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+        }
+    }
+</div>
+
+</div>
