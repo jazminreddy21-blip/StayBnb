@@ -1,36 +1,291 @@
 ﻿@{
-ViewData["Title"] = "Admin Dashboard";
+    ViewData["Title"] = "Admin Dashboard";
 }
 
-<div class="container py-5">
-    <h1 class="mb-2">Admin Dashboard</h1>
-    <p class="text-muted mb-4">
-        Welcome to the StayBnb administration area.
+<style>
+    .admin-dashboard {
+        max-width: 1150px;
+        margin: 45px auto;
+        padding: 0 24px 55px;
+        color: #352631;
+    }
+
+    .admin-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 32px;
+        padding: 32px;
+        border: 1px solid #f0d3e0;
+        border-radius: 22px;
+        background: linear-gradient(120deg, #fff0f6, #ffe0ec);
+    }
+
+    .admin-eyebrow {
+        margin-bottom: 10px;
+        color: #b83f74;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 2px;
+    }
+
+    .admin-header h1 {
+        margin-bottom: 10px;
+        font-size: 34px;
+        font-weight: 800;
+    }
+
+    .admin-header p {
+        margin-bottom: 0;
+        color: #806d78;
+    }
+
+    .admin-header-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: 76px;
+        height: 76px;
+        border-radius: 22px;
+        background: #f5c1d8;
+        color: #a52f64;
+        font-size: 30px;
+    }
+
+    .admin-section-title {
+        margin: 0 0 8px;
+        font-size: 23px;
+        font-weight: 800;
+    }
+
+    .admin-section-subtitle {
+        margin-bottom: 24px;
+        color: #806d78;
+    }
+
+    .admin-cards {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 22px;
+    }
+
+    .admin-card {
+        padding: 27px;
+        border: 1px solid #f0d7e3;
+        border-radius: 20px;
+        background: #fff;
+        box-shadow: 0 8px 25px rgba(120, 54, 84, .06);
+        transition: transform .2s, box-shadow .2s;
+    }
+
+    .admin-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 13px 30px rgba(120, 54, 84, .10);
+    }
+
+    .admin-card-icon {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 48px;
+        height: 48px;
+        margin-bottom: 20px;
+        border-radius: 15px;
+        background: #ffe5ef;
+        color: #bd477a;
+        font-size: 20px;
+    }
+
+    .admin-card h2 {
+        margin-bottom: 10px;
+        font-size: 19px;
+        font-weight: 800;
+    }
+
+    .admin-count {
+        margin: 12px 0;
+        color: #bd477a;
+        font-size: 46px;
+        font-weight: 850;
+        line-height: 1.2;
+    }
+
+    .admin-card-description {
+        min-height: 44px;
+        margin-bottom: 22px;
+        color: #806d78;
+        line-height: 1.6;
+    }
+
+    .admin-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 9px;
+        padding: 12px 18px;
+        border: 1px solid #c34c7d;
+        border-radius: 12px;
+        background: #c34c7d;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 750;
+        text-decoration: none;
+        transition: background .2s, border-color .2s;
+    }
+
+    .admin-button:hover {
+        border-color: #a93667;
+        background: #a93667;
+        color: #fff;
+    }
+
+    .admin-button-secondary {
+        border-color: #e8bfd1;
+        background: #fff;
+        color: #a93667;
+    }
+
+    .admin-button-secondary:hover {
+        border-color: #e2a1be;
+        background: #fff0f6;
+        color: #8f2857;
+    }
+
+    .admin-access-note {
+        display: flex;
+        align-items: flex-start;
+        gap: 13px;
+        margin-top: 25px;
+        padding: 18px 20px;
+        border: 1px solid #f0d7e3;
+        border-radius: 15px;
+        background: #fff8fb;
+        color: #806d78;
+        line-height: 1.6;
+    }
+
+    .admin-access-note i {
+        margin-top: 3px;
+        color: #c34c7d;
+    }
+
+    @@media (max-width: 700px) {
+        .admin-dashboard {
+            margin-top: 25px;
+            padding: 0 14px 40px;
+        }
+
+        .admin-header {
+            padding: 23px;
+        }
+
+        .admin-header h1 {
+            font-size: 27px;
+        }
+
+        .admin-header-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 16px;
+            font-size: 22px;
+        }
+
+        .admin-cards {
+            grid-template-columns: 1fr;
+        }
+
+        .admin-card {
+            padding: 22px;
+        }
+    }
+</style>
+
+<div class="admin-dashboard">
+
+    <div class="admin-header">
+        <div>
+            <p class="admin-eyebrow">PLATFORM MANAGEMENT</p>
+
+            <h1>Admin Dashboard</h1>
+
+            <p>
+                Welcome to StayBnb administration.
+                Manage property approvals and host applications.
+            </p>
+        </div>
+
+        <div class="admin-header-icon">
+            <i class="fa-solid fa-shield-halved"></i>
+        </div>
+    </div>
+
+    <h2 class="admin-section-title">Overview</h2>
+
+    <p class="admin-section-subtitle">
+        Review pending requests and keep the platform running smoothly.
     </p>
 
-<div class="row g-4">
-    <div class="col-md-6">
-        <div class="card shadow-sm h-100">
-            <div class="card-body p-4">
-                <h5 class="card-title">Pending Properties</h5>
-                <p class="display-4 fw-bold">@ViewBag.PendingCount</p>
-                <p class="text-muted">
-                    Properties waiting for approval.
-                </p>
+    <div class="admin-cards">
 
-                <a asp-controller="Admin"
-                   asp-action="Properties"
-                   class="btn btn-primary">
-                    Manage Properties
-                </a>
-                <a asp-controller="Admin"
-   asp-action="HostApplications"
-   class="btn btn-outline-secondary mt-2">
-    Review Host Applications
-</a>
+        <div class="admin-card">
+            <div class="admin-card-icon">
+                <i class="fa-solid fa-house-circle-check"></i>
+            </div>
+
+            <h2>Pending Properties</h2>
+
+            <div class="admin-count">
+                @ViewBag.PendingCount
+            </div>
+
+            <p class="admin-card-description">
+                Properties waiting for review and approval before
+                they can appear on StayBnb.
+            </p>
+
+            <a asp-controller="Admin"
+               asp-action="Properties"
+               class="admin-button">
+                <i class="fa-solid fa-house"></i>
+                Manage Properties
+            </a>
+        </div>
+
+        <div class="admin-card">
+            <div class="admin-card-icon">
+                <i class="fa-solid fa-user-check"></i>
+            </div>
+
+            <h2>Host Applications</h2>
+
+            <p class="admin-card-description">
+                Review applications from users who want to become
+                hosts and list their properties.
+            </p>
+
+            <a asp-controller="Admin"
+               asp-action="HostApplications"
+               class="admin-button admin-button-secondary">
+                <i class="fa-solid fa-clipboard-check"></i>
+                Review Host Applications
+            </a>
+        </div>
+
+    </div>
+
+    <div class="admin-access-note">
+        <i class="fa-solid fa-circle-info"></i>
+
+        <div>
+            <strong>Administrator access</strong>
+            <div>
+                Use these tools to review property submissions and host
+                applications. All approval actions should follow the
+                platform's authorization rules.
             </div>
         </div>
     </div>
-</div>
 
 </div>

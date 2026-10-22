@@ -1,0 +1,266 @@
+﻿@model IEnumerable<StayBnb.Models.Message>
+
+@{
+    ViewData["Title"] = "Messages";
+
+    var currentUserId = User.FindFirst(
+        System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+    var conversations = Model
+        .GroupBy(m => m.SenderId == currentUserId
+            ? m.ReceiverId
+            : m.SenderId)
+        .Select(g => g.OrderByDescending(m => m.SentAt).First())
+        .OrderByDescending(m => m.SentAt)
+        .ToList();
+}
+
+<style>
+    .messages-page {
+        max-width: 1050px;
+        margin: 45px auto;
+        padding: 0 24px 60px;
+        color: #352631;
+    }
+
+    .messages-header {
+        margin-bottom: 30px;
+    }
+
+    .messages-eyebrow {
+        color: #c34c7d;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 2px;
+    }
+
+    .messages-header h1 {
+        margin: 10px 0;
+        font-size: 36px;
+        font-weight: 800;
+    }
+
+    .messages-subtitle {
+        color: #806d78;
+        font-size: 15px;
+    }
+
+    .messages-count {
+        display: inline-block;
+        margin-top: 12px;
+        padding: 7px 13px;
+        border-radius: 30px;
+        background: #ffe4ef;
+        color: #a52f64;
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .messages-list {
+        display: grid;
+        gap: 14px;
+    }
+
+    .conversation-card {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 22px;
+        border: 1px solid #f2dce6;
+        border-radius: 18px;
+        background: #fff;
+        color: inherit;
+        text-decoration: none;
+        box-shadow: 0 5px 18px rgba(120, 54, 84, 0.05);
+        transition: transform .2s, box-shadow .2s, border-color .2s;
+    }
+
+    .conversation-card:hover {
+        transform: translateY(-2px);
+        border-color: #e8a5c2;
+        box-shadow: 0 10px 25px rgba(120, 54, 84, 0.10);
+        color: inherit;
+    }
+
+    .conversation-avatar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #f8c5dc, #e9a2c1);
+        color: #873354;
+        font-size: 22px;
+    }
+
+    .conversation-details {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .conversation-details h3 {
+        margin: 0 0 7px;
+        font-size: 17px;
+        font-weight: 750;
+    }
+
+    .conversation-preview {
+        margin: 0;
+        color: #806d78;
+        font-size: 14px;
+        overflow-wrap: anywhere;
+    }
+
+    .conversation-date {
+        margin-top: 8px;
+        color: #a18d98;
+        font-size: 12px;
+    }
+
+    .conversation-arrow {
+        color: #c34c7d;
+        font-size: 20px;
+    }
+
+    .messages-empty {
+        padding: 55px 25px;
+        border: 1px dashed #e8bfd1;
+        border-radius: 20px;
+        background: #fff8fb;
+        text-align: center;
+    }
+
+    .messages-empty-icon {
+        color: #ce6d98;
+        font-size: 42px;
+        margin-bottom: 14px;
+    }
+
+    .messages-empty h2 {
+        margin-bottom: 10px;
+        font-size: 23px;
+    }
+
+    .messages-empty p {
+        color: #806d78;
+        margin-bottom: 20px;
+    }
+
+    .messages-home-button {
+        display: inline-block;
+        padding: 12px 22px;
+        border-radius: 30px;
+        background: #c34c7d;
+        color: white;
+        text-decoration: none;
+        font-weight: 700;
+    }
+
+    .messages-home-button:hover {
+        background: #a93667;
+        color: white;
+    }
+
+    @@media (max-width: 600px) {
+        .messages-page {
+            margin-top: 28px;
+            padding: 0 15px 40px;
+        }
+
+        .messages-header h1 {
+            font-size: 29px;
+        }
+
+        .conversation-card {
+            padding: 16px;
+            gap: 12px;
+        }
+
+        .conversation-avatar {
+            width: 44px;
+            height: 44px;
+            font-size: 18px;
+        }
+    }
+</style>
+
+<div class="messages-page">
+    <div class="messages-header">
+        <span class="messages-eyebrow">STAY CONNECTED</span>
+        <h1>Your Messages 💌</h1>
+        <p class="messages-subtitle">
+            Chat with your hosts and guests to help make every stay smoother.
+        </p>
+
+        <span class="messages-count">
+            <i class="fa-regular fa-comments"></i>
+            @conversations.Count conversation(s)
+        </span>
+    </div>
+
+    @if (!conversations.Any())
+    {
+        <div class="messages-empty">
+            <div class="messages-empty-icon">
+                <i class="fa-regular fa-paper-plane"></i>
+            </div>
+
+            <h2>Your inbox is waiting</h2>
+
+            <p>
+                Once you start a conversation with a host or guest,
+                your messages will appear here.
+            </p>
+
+            <a asp-controller="Home"
+               asp-action="Index"
+               class="messages-home-button">
+                Explore stays
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="messages-list">
+            @foreach (var message in conversations)
+            {
+                var otherUserId = message.SenderId == currentUserId
+                    ? message.ReceiverId
+                    : message.SenderId;
+
+                var otherUserName = message.SenderId == currentUserId
+                    ? message.Receiver?.UserName
+                    : message.Sender?.UserName;
+
+                <a asp-controller="Message"
+                   asp-action="Conversation"
+                   asp-route-userId="@otherUserId"
+                   class="conversation-card">
+
+                    <div class="conversation-avatar">
+                        <i class="fa-regular fa-user"></i>
+                    </div>
+
+                    <div class="conversation-details">
+                        <h3>@(otherUserName ?? "StayBnb member")</h3>
+
+                        <p class="conversation-preview">
+                            @message.Content
+                        </p>
+
+                        <div class="conversation-date">
+                            <i class="fa-regular fa-clock"></i>
+                            @message.SentAt.ToLocalTime().ToString("dd MMM yyyy, HH:mm")
+                        </div>
+                    </div>
+
+                    <div class="conversation-arrow">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </div>
+                </a>
+            }
+        </div>
+    }
+</div>

@@ -1,30 +1,200 @@
 ﻿@model IEnumerable<StayBnb.Models.ApplicationUser>
 
 @{
-    ViewData["Title"] = "Manage Administrators";
+    ViewData["Title"] = "Manage Users & Administrators";
 }
 
-<div class="superadmin-dashboard">
-    <p class="superadmin-eyebrow">PLATFORM MANAGEMENT</p>
-    <h1>Manage Administrators</h1>
-    <p>Review registered users and manage administrator access.</p>
+<style>
+    .manage-users-page {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 0 24px 50px;
+        color: #352631;
+    }
+
+    .manage-users-eyebrow {
+        color: #c34c7d;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 2px;
+    }
+
+    .manage-users-page h1 {
+        margin: 10px 0;
+        font-size: 32px;
+        font-weight: 800;
+    }
+
+    .manage-users-subtitle {
+        margin-bottom: 25px;
+        color: #806d78;
+    }
+
+    .manage-users-panel {
+        overflow: hidden;
+        margin-bottom: 24px;
+        border: 1px solid #f0d7e3;
+        border-radius: 18px;
+        background: white;
+        box-shadow: 0 8px 25px rgba(120, 54, 84, .06);
+    }
+
+    .manage-users-panel-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid #f0dce5;
+        background: #fff2f7;
+    }
+
+    .manage-users-panel-header h2 {
+        margin: 0;
+        font-size: 19px;
+        font-weight: 750;
+    }
+
+    .manage-users-table {
+        width: 100%;
+        margin: 0;
+        border-collapse: collapse;
+    }
+
+    .manage-users-table th {
+        padding: 15px 20px;
+        background: #fffafd;
+        color: #806d78;
+        font-size: 12px;
+        letter-spacing: .5px;
+        text-align: left;
+        text-transform: uppercase;
+    }
+
+    .manage-users-table td {
+        padding: 17px 20px;
+        border-top: 1px solid #f5e8ee;
+        vertical-align: middle;
+    }
+
+    .manage-users-table tbody tr:hover {
+        background: #fffafd;
+    }
+
+    .manage-users-email {
+        overflow-wrap: anywhere;
+    }
+
+    .manage-users-role {
+        display: inline-block;
+        padding: 6px 11px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 750;
+        white-space: nowrap;
+    }
+
+    .role-admin {
+        background: #fce1ed;
+        color: #a52f64;
+    }
+
+    .role-superadmin {
+        background: #eadfff;
+        color: #6336a0;
+    }
+
+    .role-user {
+        background: #f2edf0;
+        color: #65525d;
+    }
+
+    .manage-users-button {
+        display: inline-block;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 10px;
+        background: #c34c7d;
+        color: white;
+        font-size: 13px;
+        font-weight: 750;
+        text-decoration: none;
+        cursor: pointer;
+    }
+
+    .manage-users-button:hover {
+        background: #a93667;
+        color: white;
+    }
+
+    .manage-users-muted {
+        color: #8f7d87;
+        font-size: 13px;
+    }
+
+    .manage-users-alert {
+        margin-bottom: 20px;
+        padding: 14px 17px;
+        border: 1px solid #efbfd3;
+        border-radius: 12px;
+        background: #fff0f6;
+        color: #92365e;
+    }
+
+    .manage-users-empty {
+        padding: 35px 20px;
+        color: #806d78;
+        text-align: center;
+    }
+
+    @@media (max-width: 700px) {
+        .manage-users-page {
+            margin-top: 25px;
+            padding: 0 12px 35px;
+        }
+
+        .manage-users-page h1 {
+            font-size: 26px;
+        }
+
+        .manage-users-table th,
+        .manage-users-table td {
+            padding: 12px 10px;
+        }
+    }
+</style>
+
+<div class="manage-users-page">
+    <p class="manage-users-eyebrow">PLATFORM MANAGEMENT</p>
+
+    <h1>Manage Users &amp; Administrators</h1>
+
+    <p class="manage-users-subtitle">
+        Review registered accounts and manage administrator access.
+    </p>
 
     @if (TempData["AdminMessage"] != null)
     {
-        <div class="alert alert-info">
+        <div class="manage-users-alert">
+            <i class="fa-solid fa-circle-info"></i>
             @TempData["AdminMessage"]
         </div>
     }
 
-    <div class="superadmin-section">
+    <div class="manage-users-panel">
+        <div class="manage-users-panel-header">
+            <h2>
+                <i class="fa-solid fa-users"></i>
+                Registered Accounts
+            </h2>
+        </div>
+
         @if (!Model.Any())
         {
-            <p>No registered users were found.</p>
+            <div class="manage-users-empty">
+                No registered users were found.
+            </div>
         }
         else
         {
             <div class="table-responsive">
-                <table class="table align-middle">
+                <table class="manage-users-table">
                     <thead>
                         <tr>
                             <th>Name</th>
@@ -33,44 +203,76 @@
                             <th>Action</th>
                         </tr>
                     </thead>
+
                     <tbody>
                         @foreach (var user in Model)
                         {
-                            var isAdmin = User.Identity != null
-                                && await UserIsAdmin(user.Id);
+                            var isSuperAdmin = await UserIsSuperAdmin(user.Id);
+                            var isAdmin = await UserIsAdmin(user.Id);
 
                             <tr>
-                                <td>@user.FullName</td>
-                                <td>@user.Email</td>
                                 <td>
-                                    @if (isAdmin)
+                                    @(string.IsNullOrWhiteSpace(user.FullName)
+                                        ? "Name not provided"
+                                        : user.FullName)
+                                </td>
+
+                                <td class="manage-users-email">
+                                    @(user.Email ?? "No email")
+                                </td>
+
+                                <td>
+                                    @if (isSuperAdmin)
                                     {
-                                        <span class="badge bg-success">Admin</span>
+                                        <span class="manage-users-role role-superadmin">
+                                            SuperAdmin
+                                        </span>
+                                    }
+                                    else if (isAdmin)
+                                    {
+                                        <span class="manage-users-role role-admin">
+                                            Admin
+                                        </span>
                                     }
                                     else
                                     {
-                                        <span class="badge bg-secondary">Registered User</span>
+                                        <span class="manage-users-role role-user">
+                                            Registered User
+                                        </span>
                                     }
                                 </td>
+
                                 <td>
-                                    @if (!isAdmin)
+                                    @if (isSuperAdmin)
+                                    {
+                                        <span class="manage-users-muted">
+                                            Protected account
+                                        </span>
+                                    }
+                                    else if (isAdmin)
+                                    {
+                                        <span class="manage-users-muted">
+                                            Already an Admin
+                                        </span>
+                                    }
+                                    else
                                     {
                                         <form asp-controller="SuperAdmin"
                                               asp-action="PromoteToAdmin"
                                               method="post">
+
                                             @Html.AntiForgeryToken()
+
                                             <input type="hidden"
                                                    name="userId"
                                                    value="@user.Id" />
+
                                             <button type="submit"
-                                                    class="superadmin-button">
+                                                    class="manage-users-button">
+                                                <i class="fa-solid fa-user-shield"></i>
                                                 Promote to Admin
                                             </button>
                                         </form>
-                                    }
-                                    else
-                                    {
-                                        <span>Already an Admin</span>
                                     }
                                 </td>
                             </tr>
@@ -83,7 +285,8 @@
 
     <a asp-controller="SuperAdmin"
        asp-action="Dashboard"
-       class="superadmin-button">
+       class="manage-users-button">
+        <i class="fa-solid fa-arrow-left"></i>
         Back to Dashboard
     </a>
 </div>
@@ -98,5 +301,16 @@
 
         return user != null
             && await userManager.IsInRoleAsync(user, "Admin");
+    }
+
+    public async Task<bool> UserIsSuperAdmin(string userId)
+    {
+        var userManager = Context.RequestServices
+            .GetRequiredService<UserManager<StayBnb.Models.ApplicationUser>>();
+
+        var user = await userManager.FindByIdAsync(userId);
+
+        return user != null
+            && await userManager.IsInRoleAsync(user, "SuperAdmin");
     }
 }

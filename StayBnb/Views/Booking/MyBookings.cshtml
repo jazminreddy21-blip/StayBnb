@@ -60,7 +60,16 @@
                     </p>
 
                     @if (booking.Status == "Confirmed")
+
                     {
+<a asp-controller="Message"
+   asp-action="Conversation"
+   asp-route-userId="@booking.Property?.HostId"
+   class="booking-instructions-button">
+    <i class="fa-regular fa-comments"></i>
+    Message Host
+</a>
+
                         <a asp-controller="Booking"
                            asp-action="CheckInInstructions"
                            asp-route-id="@booking.Id"
