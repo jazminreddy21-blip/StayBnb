@@ -5,6 +5,14 @@
 }
 
 <div class="container py-5">
+    
+@if (TempData["AdminMessage"] != null)
+{
+    <div class="alert alert-info mb-4" role="alert">
+        @TempData["AdminMessage"]
+    </div>
+}
+
     <h1 class="mb-2">Host Applications</h1>
     <p class="text-muted mb-4">
         Review requests from users who want to become hosts.

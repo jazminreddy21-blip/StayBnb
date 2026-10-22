@@ -43,7 +43,6 @@ namespace StayBnb.Controllers
 
             return View(applications);
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ApproveHostApplication(int id)
@@ -54,33 +53,48 @@ namespace StayBnb.Controllers
 
             if (application == null)
             {
-                return NotFound();
+                TempData["AdminMessage"] =
+                    "The host application could not be found.";
+
+                return RedirectToAction(nameof(HostApplications));
             }
 
             if (application.Status != "Pending")
             {
+                TempData["AdminMessage"] =
+                    $"This application has already been processed. Current status: {application.Status}.";
+
                 return RedirectToAction(nameof(HostApplications));
             }
 
             if (application.User == null)
             {
-                return NotFound();
-            }
-
-            var result = await _userManager.AddToRoleAsync(
-                application.User, "Host");
-
-            if (!result.Succeeded)
-            {
-                foreach (var error in result.Errors)
-                {
-                    ModelState.AddModelError("", error.Description);
-                }
-
                 TempData["AdminMessage"] =
-                    "Could not assign the Host role. Please check the account's roles.";
+                    "Approval failed because the applicant's account could not be found.";
 
                 return RedirectToAction(nameof(HostApplications));
+            }
+
+            // Check whether the user already has the Host role.
+            var alreadyHost = await _userManager.IsInRoleAsync(
+                application.User, "Host");
+
+            if (!alreadyHost)
+            {
+                var result = await _userManager.AddToRoleAsync(
+                    application.User, "Host");
+
+                if (!result.Succeeded)
+                {
+                    var errors = string.Join(
+                        "; ",
+                        result.Errors.Select(e => e.Description));
+
+                    TempData["AdminMessage"] =
+                        $"Could not assign the Host role: {errors}";
+
+                    return RedirectToAction(nameof(HostApplications));
+                }
             }
 
             application.Status = "Approved";
@@ -90,7 +104,7 @@ namespace StayBnb.Controllers
             await _context.SaveChangesAsync();
 
             TempData["AdminMessage"] =
-                "Host application approved successfully.";
+                "Host application approved successfully. The applicant now has Host access.";
 
             return RedirectToAction(nameof(HostApplications));
         }
